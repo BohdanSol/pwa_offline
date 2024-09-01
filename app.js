@@ -1,3 +1,4 @@
+/* Offline mode start */
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const dataContainer = document.getElementById("data-container");
 
@@ -39,3 +40,33 @@ if ("serviceWorker" in navigator) {
 }
 
 fetchData();
+/* Offline mode end */
+
+/* PWA start */
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  showInstallPrompt();
+});
+
+function showInstallPrompt() {
+  const installButton = document.createElement("button");
+  installButton.textContent = "Install App";
+  document.body.appendChild(installButton);
+
+  installButton.addEventListener("click", () => {
+    installButton.style.display = "none";
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the install prompt");
+      } else {
+        console.log("User dismissed the install prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
+}
+/* PWA end */
